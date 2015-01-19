@@ -1,0 +1,3 @@
+*.xpi
+./mipper
+mipper_cache/
