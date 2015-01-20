@@ -5,10 +5,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	"path/filepath"
 	"text/template"
@@ -130,20 +128,34 @@ func (p *Package) FetchAll() {
 			log.Fatal(err)
 		}
 	}
+
+	// Parallelize addon downloads.
+	var datac, errc = make(chan []byte), make(chan error)
+
+	for _, addon := range p.Addons {
+		go func(a amo.Addon) {
+			data, err := a.Fetch()
+			if err != nil {
+				errc <- err
+			}
+			datac <- data
+		}(addon)
+	}
+
 	var filename string
 	for _, addon := range p.Addons {
-		filename = filepath.Join(cacheDir, fmt.Sprintf("%v.xpi", addon.GUID))
-		f, err := os.Create(filename)
-		if err != nil {
+		select {
+		case data := <-datac:
+			filename = filepath.Join(cacheDir, fmt.Sprintf("%v.xpi", addon.GUID))
+			f, err := os.Create(filename)
+			defer f.Close()
+			_, err = f.Write(data)
+			if err != nil {
+				log.Fatal(err)
+			}
+		case err := <-errc:
 			log.Fatal(err)
 		}
-		defer f.Close()
-		resp, err := http.Get(addon.URL)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer resp.Body.Close()
-		_, err = io.Copy(f, resp.Body)
 	}
 }
 

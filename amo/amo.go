@@ -38,6 +38,19 @@ type AMOClient struct {
 	Version string
 }
 
+func (a *Addon) Fetch() ([]byte, error) {
+	resp, err := http.Get(a.URL)
+	if err != nil {
+		return nil, err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
+}
+
 // NewAMOClient constructs a new AMOClient using the constant URL and versions
 // defined in this package.
 func NewAMOClient() *AMOClient {
