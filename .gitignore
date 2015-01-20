@@ -1,3 +1,4 @@
+*.json
 *.xpi
-./mipper
+mipper
 mipper_cache/
