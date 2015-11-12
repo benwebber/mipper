@@ -25,6 +25,9 @@ func Search(ctx *cli.Context) {
 	}
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 8, 0, '\t', 0)
+	if ctx.Bool("headers") {
+		fmt.Fprintln(w, "ID\tName")
+	}
 	for _, addon := range addons {
 		fmt.Fprintf(w, "%v\t%s\n", addon.ID, addon.Name)
 	}

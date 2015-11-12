@@ -99,6 +99,12 @@ func main() {
 			ShortName: "s",
 			Usage:     descSearch,
 			Action:    commands.Search,
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "headers, H",
+					Usage: "Show table headers",
+				},
+			},
 		},
 		{
 			Name:      "version",
