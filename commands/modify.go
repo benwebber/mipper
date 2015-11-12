@@ -12,21 +12,20 @@ import (
 
 func modifyPackage(ctx *cli.Context, action string) {
 
-	actions := map[string]func(p *pkg.Package, addon amo.Addon){
-		"add": func(p *pkg.Package, addon amo.Addon) {
-			p.Add(addon)
+	actions := map[string]func(p *pkg.Package, addon *amo.Addon){
+		"add": func(p *pkg.Package, addon *amo.Addon) {
+			p.Add(*addon)
 		},
-		"remove": func(p *pkg.Package, addon amo.Addon) {
-			p.Remove(addon)
+		"remove": func(p *pkg.Package, addon *amo.Addon) {
+			p.Remove(*addon)
 		},
 	}
 
 	manifest := ctx.String("manifest")
 
 	if len(ctx.Args()) != 1 {
-		log.Fatal(errors.New("you must provide an addon name"))
+		log.Fatal(errors.New("you must provide an addon name or ID"))
 	}
-	addonName := ctx.Args()[0]
 
 	if manifest == "" {
 		log.Fatal(errors.New("you must provide a package manifest"))
@@ -37,9 +36,11 @@ func modifyPackage(ctx *cli.Context, action string) {
 		log.Fatal(err)
 	}
 
-	amo := amo.NewAMOClient()
-	addons, err := amo.Search(addonName)
-	addon := addons[0]
+	amoClient := amo.NewAMOClient()
+	addon, err := amoClient.AddonByIdOrName(ctx.Args()[0])
+	if err != nil {
+		log.Fatal(err)
+	}
 	actions[action](p, addon)
 	p.WriteFile(manifest)
 }

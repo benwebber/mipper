@@ -38,16 +38,16 @@ The core workflow is to construct a JSON package manifest and run `mipper build`
 Mipper lets you search for addons using the [addons.mozilla.org API](https://developer.mozilla.org/en-US/docs/addons.mozilla.org_%28AMO%29_API_Developers%27_Guide/The_generic_AMO_API).
 
 ````
-$ mipper search search vimperator
-Vimperator
-Vimperator-ja
-Vimperator Chinese Help/中文帮助
-Vimperator 繁體中文幫助
-Vimium
-VimFx
-Pentadactyl
-Clipple
-Zutilo Utility for Zotero
+$ mipper search vimperator
+4891	Vimperator
+123891	Vimperator-ja
+480100	Vimperator Chinese Help/中文帮助
+481488	Vimperator 繁體中文幫助
+358057	Vimium
+404785	VimFx
+235854	Pentadactyl
+58678	Clipple
+403306	Zutilo Utility for Zotero
 ```
 
 Currently, Mipper returns the exact results provided by the API. This can be quite noisy, and a definite place for improvement.

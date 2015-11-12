@@ -12,16 +12,17 @@ import (
 
 func Info(ctx *cli.Context) {
 	if len(ctx.Args()) != 1 {
-		log.Fatal(errors.New("you must provide an addon name"))
+		log.Fatal(errors.New("you must provide an addon name or ID"))
 	}
-	addonName := ctx.Args()[0]
 
-	amo := amo.NewAMOClient()
-	addons, err := amo.Search(addonName)
+	fmt.Sprintf("+%v", ctx)
+
+	amoClient := amo.NewAMOClient()
+	addon, err := amoClient.AddonByIdOrName(ctx.Args()[0])
 	if err != nil {
 		log.Fatal(err)
 	}
-	addon := addons[0]
+
 	fmt.Printf("Name: %v\n", addon.Name)
 	fmt.Printf("Version: %v\n", addon.Version)
 	fmt.Printf("Homepage: %v\n", addon.Homepage)

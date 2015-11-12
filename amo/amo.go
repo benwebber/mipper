@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 const (
@@ -96,6 +97,22 @@ func (c *AMOClient) Addon(id uint) (*Addon, error) {
 		return &Addon{}, err
 	}
 	return &addon, nil
+}
+
+// AddonByIdOrName searches for an addon by numeric ID or name, and returns a
+// pointer to the best match Addon object.
+func (c *AMOClient) AddonByIdOrName(s string) (addon *Addon, err error) {
+	if id, e := strconv.Atoi(s); e == nil {
+		addon, err = c.Addon(uint(id))
+		return
+	}
+	addons, err := c.Search(s)
+	if len(addons) >= 1 {
+		addon = &addons[0]
+		return
+	} else {
+		return
+	}
 }
 
 // Search searches the AMO API for addons matching a particular string, and
